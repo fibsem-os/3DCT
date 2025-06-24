@@ -4,6 +4,7 @@ import datetime
 from typing import List, Tuple
 
 import napari
+import napari.utils
 import numpy as np
 import pandas as pd
 from napari.layers import Image as NapariImageLayer
@@ -237,6 +238,7 @@ class CorrelationUI(tdct_main.Ui_MainWindow, QtWidgets.QMainWindow):
         # mark surface (alt click?)
         # update poi
         self.pushButton_refreactive_update_poi.clicked.connect(self.apply_refractive_index_correction)
+        # TODO: disable this button if no correlation results are available, no surface point available
 
     def on_method_changed(self):
 
@@ -1012,9 +1014,16 @@ class CorrelationUI(tdct_main.Ui_MainWindow, QtWidgets.QMainWindow):
     def apply_refractive_index_correction(self):
 
         # get surface point
-        surface_coord = self.df[self.df["type"] == "Surface"][["x", "y", "z"]].values.astype(
+        surface_coords = self.df[self.df["type"] == "Surface"][["x", "y", "z"]].values.astype(
             np.float32
-        )[0]
+        )
+        if len(surface_coords) == 0:
+            napari.utils.notifications.show_warning(
+                "No surface coordinates found. Please add a surface point to the coordinates."
+            )
+            return
+
+        surface_coord = surface_coords[0]
 
         # get result point (poi)
         poi_image_coordinates = self.correlation_results["output"]["poi"][0]["image_px"]
