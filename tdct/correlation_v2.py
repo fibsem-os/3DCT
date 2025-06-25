@@ -9,6 +9,8 @@ import yaml
 
 from tdct.pyto.rigid_3d import Rigid3D
 
+logging.warning("This module is being migrate to fibsem-os (github.com/fibsem-os/fibsem-os). No further updates will be made to this module. ")
+
 DEFAULT_OPTIMIZATION_PARAMETERS = {
     'random_rotations': True,
     'rotation_init': 'gl2',
